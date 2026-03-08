@@ -1,0 +1,48 @@
+[
+  {
+    "params": {
+      "short_period": 5,
+      "long_period": 40,
+      "rsi_max_open": 70,
+      "stop_loss_pct": 0.005,
+      "take_profit_pct": 0.015,
+      "max_positions": 3,
+      "rsi_period": 14,
+      "volume_ma_period": 20,
+      "use_volume_filter": true,
+      "max_exposure_pct": 0.6,
+      "position_pct": 0.2
+    },
+    "sharpe_ratio": -5.861113246129234,
+    "calmar_ratio": -0.009504247607549185,
+    "total_return": -0.21468641370062203,
+    "max_drawdown": -0.2192408501694051,
+    "total_trades": 1349,
+    "win_rate": 0.22386953298739806,
+    "score": -0.21468641370062203,
+    "valid": false
+  },
+  {
+    "params": {
+      "short_period": 5,
+      "long_period": 20,
+      "rsi_max_open": 70,
+      "stop_loss_pct": 0.005,
+      "take_profit_pct": 0.015,
+      "max_positions": 3,
+      "rsi_period": 14,
+      "volume_ma_period": 20,
+      "use_volume_filter": true,
+      "max_exposure_pct": 0.6,
+      "position_pct": 0.2
+    },
+    "sharpe_ratio": -5.769577911439115,
+    "calmar_ratio": -0.010261477149531004,
+    "total_return": -0.331666913153171,
+    "max_drawdown": -0.338354329461213,
+    "total_trades": 2143,
+    "win_rate": 0.23145123658422773,
+    "score": -0.331666913153171,
+    "valid": false
+  }
+]

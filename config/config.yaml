@@ -1,0 +1,366 @@
+# ============================================================
+# 数字货币量化交易系统配置
+# Crypto Quantitative Trading System Configuration
+# 目标：夏普比率 > 4
+# ============================================================
+
+# 交易模式配置
+trading:
+  # 运行模式: backtest(回测), paper(模拟盘), live(实盘)
+  mode: backtest
+  
+  # 交易类型: spot(现货), futures(期货)
+  trade_type: futures
+  
+  # 预测时间窗口（分钟）
+  prediction_horizon: 60
+  
+  # 模型重训练间隔（小时）
+  retrain_interval: 24
+  
+  # 交易时间周期
+  timeframes:
+    - 1m
+    - 5m
+    - 15m
+  
+  # 交易币种列表（50个主流币种）
+  symbols:
+    - BTC/USDT
+    - ETH/USDT
+    - SOL/USDT
+    - BNB/USDT
+    - XRP/USDT
+    - ADA/USDT
+    - AVAX/USDT
+    - DOT/USDT
+    - MATIC/USDT
+    - LINK/USDT
+    - UNI/USDT
+    - LTC/USDT
+    - BCH/USDT
+    - ETC/USDT
+    - XLM/USDT
+    - TRX/USDT
+    - EOS/USDT
+    - FIL/USDT
+    - AAVE/USDT
+    - SUSHI/USDT
+    - COMP/USDT
+    - MKR/USDT
+    - YFI/USDT
+    - SNX/USDT
+    - CRV/USDT
+    - 1INCH/USDT
+    - GRT/USDT
+    - MANA/USDT
+    - SAND/USDT
+    - AXS/USDT
+    - FTT/USDT
+    - HT/USDT
+    - OKB/USDT
+    - LEO/USDT
+    - CRO/USDT
+    - VET/USDT
+    - ICP/USDT
+    - THETA/USDT
+    - XTZ/USDT
+    - ALGO/USDT
+    - ATOM/USDT
+    - NEAR/USDT
+    - FTM/USDT
+    - GALA/USDT
+    - APE/USDT
+    - FLOW/USDT
+    - EGLD/USDT
+    - HBAR/USDT
+    - QNT/USDT
+    - CHZ/USDT
+
+# 数据配置
+data:
+  # 交易所: binance, okx, bybit
+  exchange: binance
+  
+  # 数据存储目录
+  data_dir: ./data/storage
+  
+  # 数据格式: parquet, csv
+  storage_format: parquet
+  
+  # 数据更新间隔（秒）
+  update_interval: 60
+  
+  # 历史数据下载并发数
+  download_workers: 4
+  
+  # 数据质量检查
+  quality_check:
+    enabled: true
+    max_missing_pct: 0.01  # 最大缺失比例
+    max_price_change_pct: 0.5  # 最大价格变动比例
+
+# 因子配置
+factors:
+  # 因子选择: all(全部), selected(精选), custom(自定义)
+  selection: all
+  
+  # 精选因子列表（当selection为selected时使用）
+  selected_list:
+    - rsi_14
+    - macd_histogram
+    - bollinger_position
+    - atr_14
+    - obv_slope
+    - volume_ratio
+    - volatility_regime
+    - funding_rate
+    - open_interest_change
+    - basis
+  
+  # 回看周期
+  lookback_periods: [5, 10, 20, 60, 120]
+  
+  # 因子计算参数
+  parameters:
+    rsi_period: 14
+    macd_fast: 12
+    macd_slow: 26
+    macd_signal: 9
+    bb_period: 20
+    bb_std: 2
+    atr_period: 14
+
+# 模型配置
+model:
+  # 模型类型: lightgbm, xgboost, lstm, transformer, ensemble
+  type: ensemble
+  
+  # 夏普比率目标
+  sharpe_target: 4.0
+  
+  # 模型保存路径
+  model_path: ./models
+  
+  # 是否使用GPU
+  use_gpu: false
+  
+  # LightGBM配置
+  lightgbm:
+    objective: regression
+    metric: rmse
+    boosting_type: gbdt
+    num_leaves: 31
+    learning_rate: 0.05
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 5
+    verbose: -1
+    n_estimators: 500
+  
+  # XGBoost配置
+  xgboost:
+    objective: reg:squarederror
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    n_estimators: 500
+  
+  # LSTM配置
+  lstm:
+    hidden_size: 128
+    num_layers: 2
+    dropout: 0.2
+    batch_size: 64
+    epochs: 100
+    sequence_length: 60
+  
+  # Transformer配置
+  transformer:
+    d_model: 128
+    nhead: 8
+    num_layers: 4
+    dropout: 0.1
+    batch_size: 64
+    epochs: 100
+  
+  # 集成学习配置
+  ensemble:
+    method: stacking  # stacking, blending, voting
+    base_models:
+      - lightgbm
+      - xgboost
+      - lstm
+    meta_model: lightgbm
+    cv_folds: 5
+
+# 风控配置
+risk:
+  # 风控模式: conservative(保守), moderate(适中), aggressive(激进)
+  mode: moderate
+  
+  # 最大仓位比例（相对于账户总额）
+  max_position_pct: 0.2
+  
+  # 单个品种最大仓位
+  max_single_position_pct: 0.1
+  
+  # 最大回撤限制
+  max_drawdown_pct: 0.15
+  
+  # 日亏损限制
+  daily_loss_limit_pct: 0.05
+  
+  # 杠杆倍数
+  leverage: 3
+  
+  # 止损配置
+  stop_loss:
+    enabled: true
+    type: atr  # fixed, atr, trailing
+    atr_multiplier: 2.0
+    fixed_pct: 0.02
+  
+  # 止盈配置
+  take_profit:
+    enabled: true
+    type: ratio  # fixed, ratio, trailing
+    ratio: 2.0  # 盈亏比
+    fixed_pct: 0.04
+  
+  # 仓位管理
+  position_sizing:
+    method: volatility  # fixed, kelly, volatility, atr
+    risk_per_trade_pct: 0.01  # 每笔交易风险比例
+    volatility_lookback: 20
+  
+  # 相关性限制
+  correlation:
+    enabled: true
+    max_correlation: 0.7
+    lookback_days: 30
+
+# 交易执行配置
+execution:
+  # 执行模式: simulation(模拟), live(实盘)
+  mode: simulation
+  
+  # 订单类型: limit(限价), market(市价), iceberg(冰山)
+  order_type: limit
+  
+  # 滑点模型: fixed, linear, square_root, adaptive
+  slippage_model: adaptive
+  slippage_bps: 5  # 基点
+  
+  # 执行策略: twap, vwap, smart
+  execution_strategy: smart
+  
+  # 订单超时（秒）
+  order_timeout: 300
+  
+  # 最大订单重试次数
+  max_retries: 3
+  
+  # 价格偏移（用于限价单）
+  price_offset_bps: 10
+
+# 回测配置
+backtest:
+  # 初始资金
+  initial_capital: 100000.0
+  
+  # 手续费率
+  maker_fee: 0.0002
+  taker_fee: 0.0005
+  
+  # 滑点设置
+  slippage:
+    enabled: true
+    model: volatility
+    base_bps: 5
+  
+  # 资金费率（合约）
+  funding_rate:
+    enabled: true
+    default_rate: 0.0001
+  
+  # 绩效分析
+  analytics:
+    calculate_alpha_beta: true
+    benchmark: BTC/USDT
+    risk_free_rate: 0.02
+
+# 日志配置
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # 日志文件
+  file:
+    enabled: true
+    path: ./logs/trading.log
+    max_size: 100MB
+    backup_count: 10
+  
+  # 控制台输出
+  console:
+    enabled: true
+  
+  # 远程日志（可选）
+  remote:
+    enabled: false
+    endpoint: ""
+
+# 通知配置
+notification:
+  # 交易通知
+  trade:
+    enabled: true
+    channels:
+      - console
+      # - email
+      # - telegram
+      # - webhook
+  
+  # 风控警报
+  risk_alert:
+    enabled: true
+    channels:
+      - console
+  
+  # 每日报告
+  daily_report:
+    enabled: true
+    time: "20:00"
+
+# API配置（实盘模式需要）
+api:
+  binance:
+    api_key: ${BINANCE_API_KEY}
+    api_secret: ${BINANCE_API_SECRET}
+    sandbox: true
+  
+  okx:
+    api_key: ${OKX_API_KEY}
+    api_secret: ${OKX_API_SECRET}
+    passphrase: ${OKX_PASSPHRASE}
+    sandbox: true
+
+# 性能优化
+performance:
+  # 并行计算
+  parallel:
+    enabled: true
+    max_workers: 8
+  
+  # 缓存
+  cache:
+    enabled: true
+    type: memory  # memory, redis
+    ttl: 3600
+  
+  # 数据预加载
+  preload:
+    enabled: true
+    lookback_days: 30

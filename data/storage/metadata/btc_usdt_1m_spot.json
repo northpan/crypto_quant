@@ -1,0 +1,20 @@
+{
+  "symbol": "BTC/USDT",
+  "timeframe": "1m",
+  "market_type": "spot",
+  "exchange": "binance",
+  "start_time": "2026-03-07T15:06:00",
+  "end_time": "2026-03-08T15:05:00",
+  "rows": 1440,
+  "columns": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "file_path": "data/storage/spot/BTC_USDT_1m.parquet",
+  "created_at": "2026-03-08T23:05:18.801278",
+  "updated_at": "2026-03-08T23:05:18.801278",
+  "version": "1.0"
+}

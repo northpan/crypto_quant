@@ -1,0 +1,20 @@
+{
+  "symbol": "SOL/USDT",
+  "timeframe": "1m",
+  "market_type": "spot",
+  "exchange": "binance",
+  "start_time": "2026-03-01T00:00:00",
+  "end_time": "2026-03-04T19:59:00",
+  "rows": 5520,
+  "columns": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume"
+  ],
+  "file_path": "data/storage/spot/SOL_USDT_1m.parquet",
+  "created_at": "2026-03-08T21:17:57.668315",
+  "updated_at": "2026-03-08T21:17:57.668315",
+  "version": "1.0"
+}

@@ -1,0 +1,123 @@
+Category,Name,Description,Direction,Parameters
+Technical,MACD_12_26_9,MACD趋势动量因子,POSITIVE,"{'fast': 12, 'slow': 26, 'signal': 9}"
+Technical,MACD_Signal_12_26_9,MACD交叉信号因子,POSITIVE,{}
+Technical,EMA_Cross_12_26,EMA交叉因子,POSITIVE,"{'short': 12, 'long': 26}"
+Technical,EMA_Cross_5_20,EMA交叉因子,POSITIVE,"{'short': 5, 'long': 20}"
+Technical,SMA_Cross_10_30,SMA交叉因子,POSITIVE,{}
+Technical,SMA_Cross_5_60,SMA交叉因子,POSITIVE,{}
+Technical,ADX_14,ADX趋势强度因子,NEUTRAL,{'window': 14}
+Technical,ADX_20,ADX趋势强度因子,NEUTRAL,{'window': 20}
+Technical,Trend_Strength_5_10_20_60,多周期趋势强度因子,POSITIVE,{}
+Technical,RSI_14,RSI动量因子,NEGATIVE,"{'window': 14, 'overbought': 70, 'oversold': 30}"
+Technical,RSI_7,RSI动量因子,NEGATIVE,"{'window': 7, 'overbought': 70, 'oversold': 30}"
+Technical,RSI_Divergence_14_5,RSI背离因子,POSITIVE,{}
+Technical,CCI_20,CCI商品通道指数因子,NEGATIVE,{'window': 20}
+Technical,CCI_14,CCI商品通道指数因子,NEGATIVE,{'window': 14}
+Technical,WilliamsR_14,Williams %R因子,NEGATIVE,{'window': 14}
+Technical,WilliamsR_7,Williams %R因子,NEGATIVE,{'window': 7}
+Technical,Stochastic_14_3_3,随机指标因子,NEGATIVE,{}
+Technical,Stochastic_Cross_14_3,随机指标交叉因子,POSITIVE,{}
+Technical,Momentum_10,价格动量因子,POSITIVE,{'window': 10}
+Technical,Momentum_20,价格动量因子,POSITIVE,{'window': 20}
+Technical,ROC_10,变化率因子,POSITIVE,{}
+Technical,ROC_20,变化率因子,POSITIVE,{}
+Technical,Price_Acceleration_10,价格加速度因子,POSITIVE,{}
+Technical,BB_Position_20_2.0,布林带位置因子,NEGATIVE,"{'window': 20, 'num_std': 2.0}"
+Technical,BB_Position_20_2.5,布林带位置因子,NEGATIVE,"{'window': 20, 'num_std': 2.5}"
+Technical,BB_Width_20_2.0,布林带宽度因子,NEUTRAL,{}
+Technical,BB_Squeeze_20_2.0_120,布林带挤压因子,POSITIVE,{}
+Technical,ATR_14,ATR波动率因子,NEUTRAL,{'window': 14}
+Technical,ATR_7,ATR波动率因子,NEUTRAL,{'window': 7}
+Technical,ATR_Ratio_14_100,ATR比率因子,NEUTRAL,{}
+Technical,Keltner_20_14_2.0,Keltner通道位置因子,NEGATIVE,{}
+Technical,Vol_Regime_10_30,波动率状态因子,NEUTRAL,{}
+Technical,Donchian_20,Donchian通道因子,POSITIVE,{'window': 20}
+Technical,Donchian_10,Donchian通道因子,POSITIVE,{'window': 10}
+Technical,Ichimoku_9_26,一目均衡表因子,POSITIVE,{}
+Technical,PSAR_0.02_0.2,抛物线SAR因子,POSITIVE,{}
+Volume,OBV_1,OBV能量潮因子,POSITIVE,{}
+Volume,OBV_5,OBV能量潮因子,POSITIVE,{}
+Volume,OBV_Velocity_10,OBV速度因子,POSITIVE,{}
+Volume,OBV_Divergence_10,OBV背离因子,POSITIVE,{}
+Volume,MFI_14,MFI资金流量指数因子,NEGATIVE,{'window': 14}
+Volume,MFI_7,MFI资金流量指数因子,NEGATIVE,{'window': 7}
+Volume,MFI_Velocity_14_5,MFI速度因子,POSITIVE,{}
+Volume,VWAP_20,VWAP成交量加权平均价因子,NEGATIVE,{'window': 20}
+Volume,VWAP_10,VWAP成交量加权平均价因子,NEGATIVE,{'window': 10}
+Volume,VWAP_Deviation_20,VWAP偏离度因子,NEGATIVE,{}
+Volume,VWAP_Trend_20,VWAP趋势因子,POSITIVE,{}
+Volume,Volume_Ratio_20,成交量比率因子,NEUTRAL,{'window': 20}
+Volume,Volume_Ratio_10,成交量比率因子,NEUTRAL,{'window': 10}
+Volume,Volume_Trend_5_20,成交量趋势因子,NEUTRAL,{}
+Volume,Volume_Oscillator_5_20,成交量振荡器因子,NEUTRAL,{}
+Volume,VP_Divergence_10,量价背离因子,POSITIVE,{}
+Volume,VPT_1,量价趋势因子,POSITIVE,{}
+Volume,VP_Confirmation_20_1.5,量价确认因子,POSITIVE,{}
+Volume,Money_Flow_20,资金流向因子,POSITIVE,{}
+Volume,Buying_Pressure_20,买盘压力因子,POSITIVE,{}
+Volume,AD_Line_1,累积/派发因子,POSITIVE,{}
+Volume,Chaikin_Osc_3_10,Chaikin振荡器因子,POSITIVE,{}
+Volume,Force_Index_13,力量指数因子,POSITIVE,{}
+Volume,EOM_14,简易波动指标因子,POSITIVE,{}
+Volume,NVI,负成交量指数因子,POSITIVE,{}
+Volume,PVI,正成交量指数因子,POSITIVE,{}
+Volatility,HV_20,历史波动率因子,NEUTRAL,"{'window': 20, 'annualize': True}"
+Volatility,HV_60,历史波动率因子,NEUTRAL,"{'window': 60, 'annualize': True}"
+Volatility,RV_20,实现波动率因子,NEUTRAL,{}
+Volatility,CCV_20,收盘-收盘波动率因子,NEUTRAL,{}
+Volatility,Parkinson_20,Parkinson波动率因子,NEUTRAL,"{'window': 20, 'annualize': True}"
+Volatility,Parkinson_60,Parkinson波动率因子,NEUTRAL,"{'window': 60, 'annualize': True}"
+Volatility,GK_20,Garman-Klass波动率因子,NEUTRAL,{}
+Volatility,RS_20,Rogers-Satchell波动率因子,NEUTRAL,{}
+Volatility,YZ_20,Yang-Zhang波动率因子,NEUTRAL,{}
+Volatility,GARCH_252_20,"GARCH(1,1)波动率因子",NEUTRAL,{}
+Volatility,EWMA_0.94,EWMA波动率因子,NEUTRAL,"{'lambda': 0.94, 'annualize': True}"
+Volatility,EWMA_0.97,EWMA波动率因子,NEUTRAL,"{'lambda': 0.97, 'annualize': True}"
+Volatility,Vol_Cone_20_252,波动率锥因子,NEUTRAL,{}
+Volatility,Vol_Percentile_20_252,波动率百分位因子,NEUTRAL,{}
+Volatility,Vol_Regime_5_20_1.5,波动率状态因子,NEUTRAL,{}
+Volatility,Vol_Trend_20,波动率趋势因子,NEUTRAL,{}
+Volatility,Vol_Skewness_60,波动率偏度因子,POSITIVE,{}
+Volatility,Vol_Kurtosis_60,波动率峰度因子,NEGATIVE,{}
+Volatility,Jump_Vol_20_3.0,跳跃波动率因子,NEUTRAL,{}
+Volatility,Intraday_Range_20,日内波幅因子,NEUTRAL,{}
+Volatility,Overnight_Gap_20,隔夜跳空因子,NEUTRAL,{}
+OrderFlow,BuySell_Pressure_20,买卖压力因子,POSITIVE,{'window': 20}
+OrderFlow,BuySell_Pressure_10,买卖压力因子,POSITIVE,{'window': 10}
+OrderFlow,Trade_Intensity_20,交易强度因子,NEUTRAL,{}
+OrderFlow,Tick_Rule_20,Tick规则因子,POSITIVE,{}
+OrderFlow,Lee_Ready_20,Lee-Ready因子,POSITIVE,{}
+OrderFlow,OB_Imbalance_L1,订单簿不平衡因子,POSITIVE,{'level': 1}
+OrderFlow,OB_Imbalance_L5,订单簿不平衡因子,POSITIVE,{'level': 5}
+OrderFlow,OB_Slope_5,订单簿斜率因子,POSITIVE,{}
+OrderFlow,OB_Pressure_5,订单簿压力因子,POSITIVE,{}
+OrderFlow,Spread,买卖价差因子,NEGATIVE,{}
+OrderFlow,Depth_Imbalance_5,深度不平衡因子,POSITIVE,{}
+OrderFlow,Funding_Rate,资金费率因子,NEGATIVE,{}
+OrderFlow,Funding_Momentum_3,资金费率动量因子,POSITIVE,{}
+OrderFlow,Funding_Extreme_0.001,资金费率极值因子,POSITIVE,{}
+OrderFlow,Open_Interest_20,持仓量因子,POSITIVE,{'window': 20}
+OrderFlow,Open_Interest_10,持仓量因子,POSITIVE,{'window': 10}
+OrderFlow,OI_Price_20,持仓量-价格关系因子,POSITIVE,{}
+OrderFlow,OI_Velocity_10,持仓量速度因子,POSITIVE,{}
+OrderFlow,Large_Trade_20_2.0,大单交易因子,POSITIVE,{}
+OrderFlow,Large_Trade_20_3.0,大单交易因子,POSITIVE,{}
+OrderFlow,VW_Trade_20,成交量加权交易因子,POSITIVE,{}
+CrossMarket,Basis,基差因子,NEGATIVE,{}
+CrossMarket,Basis,基差因子,NEGATIVE,{}
+CrossMarket,Basis_Momentum_5,基差动量因子,POSITIVE,{}
+CrossMarket,Basis_ZScore_60,基差Z-Score因子,NEGATIVE,{}
+CrossMarket,Contango_Backwardation_20,升贴水因子,NEGATIVE,{}
+CrossMarket,Calendar_Spread,跨期价差因子,POSITIVE,{}
+CrossMarket,Term_Structure,期限结构因子,POSITIVE,{}
+CrossMarket,Exchange_Spread_binance_okx,跨交易所价差因子,NEUTRAL,{}
+CrossMarket,Exchange_Vol_Imbalance_binance_okx,跨交易所成交量不平衡因子,POSITIVE,{}
+CrossMarket,Arbitrage_Opportunity_0.001,套利机会因子,POSITIVE,{}
+CrossMarket,Pair_Spread_BTC_ETH,币对价差因子,NEUTRAL,{}
+CrossMarket,Beta_60,Beta因子,POSITIVE,{'window': 60}
+CrossMarket,Correlation_60,相关性因子,NEUTRAL,{}
+CrossMarket,Price_Impact_20,价格冲击因子,NEUTRAL,{}
+CrossMarket,Liquidity_20,流动性因子,POSITIVE,{}
+CrossMarket,Market_Depth_5,市场深度因子,POSITIVE,{}
+CrossMarket,Cross_Market_Momentum_20,跨市场动量因子,POSITIVE,{}
+CrossMarket,Lead_Lag_20_1,领先滞后因子,POSITIVE,{}

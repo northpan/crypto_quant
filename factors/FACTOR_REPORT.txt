@@ -1,0 +1,247 @@
+
+================================================================================
+                    数字货币量化因子库 - 完整报告
+================================================================================
+
+生成时间: 2026-03-01 00:08:41
+
+================================================================================
+一、因子统计
+================================================================================
+
+总因子数量: 122
+
+分类统计:
+  - 技术指标因子 (Technical): 36 个
+  - 量价因子 (Volume): 26 个
+  - 波动率因子 (Volatility): 21 个
+  - 订单流因子 (OrderFlow): 21 个
+  - 跨市场因子 (CrossMarket): 18 个
+
+方向统计:
+  - 正向因子: 65
+  - 反向因子: 22
+  - 中性因子: 35
+
+================================================================================
+二、技术指标因子详细列表 (36个)
+================================================================================
+
+  MACD_12_26_9: MACD趋势动量因子
+  MACD_Signal_12_26_9: MACD交叉信号因子
+  EMA_Cross_12_26: EMA交叉因子
+  EMA_Cross_5_20: EMA交叉因子
+  SMA_Cross_10_30: SMA交叉因子
+  SMA_Cross_5_60: SMA交叉因子
+  ADX_14: ADX趋势强度因子
+  ADX_20: ADX趋势强度因子
+  Trend_Strength_5_10_20_60: 多周期趋势强度因子
+  RSI_14: RSI动量因子
+  RSI_7: RSI动量因子
+  RSI_Divergence_14_5: RSI背离因子
+  CCI_20: CCI商品通道指数因子
+  CCI_14: CCI商品通道指数因子
+  WilliamsR_14: Williams %R因子
+  WilliamsR_7: Williams %R因子
+  Stochastic_14_3_3: 随机指标因子
+  Stochastic_Cross_14_3: 随机指标交叉因子
+  Momentum_10: 价格动量因子
+  Momentum_20: 价格动量因子
+  ROC_10: 变化率因子
+  ROC_20: 变化率因子
+  Price_Acceleration_10: 价格加速度因子
+  BB_Position_20_2.0: 布林带位置因子
+  BB_Position_20_2.5: 布林带位置因子
+  BB_Width_20_2.0: 布林带宽度因子
+  BB_Squeeze_20_2.0_120: 布林带挤压因子
+  ATR_14: ATR波动率因子
+  ATR_7: ATR波动率因子
+  ATR_Ratio_14_100: ATR比率因子
+  Keltner_20_14_2.0: Keltner通道位置因子
+  Vol_Regime_10_30: 波动率状态因子
+  Donchian_20: Donchian通道因子
+  Donchian_10: Donchian通道因子
+  Ichimoku_9_26: 一目均衡表因子
+  PSAR_0.02_0.2: 抛物线SAR因子
+
+================================================================================
+三、量价因子详细列表 (26个)
+================================================================================
+
+  OBV_1: OBV能量潮因子
+  OBV_5: OBV能量潮因子
+  OBV_Velocity_10: OBV速度因子
+  OBV_Divergence_10: OBV背离因子
+  MFI_14: MFI资金流量指数因子
+  MFI_7: MFI资金流量指数因子
+  MFI_Velocity_14_5: MFI速度因子
+  VWAP_20: VWAP成交量加权平均价因子
+  VWAP_10: VWAP成交量加权平均价因子
+  VWAP_Deviation_20: VWAP偏离度因子
+  VWAP_Trend_20: VWAP趋势因子
+  Volume_Ratio_20: 成交量比率因子
+  Volume_Ratio_10: 成交量比率因子
+  Volume_Trend_5_20: 成交量趋势因子
+  Volume_Oscillator_5_20: 成交量振荡器因子
+  VP_Divergence_10: 量价背离因子
+  VPT_1: 量价趋势因子
+  VP_Confirmation_20_1.5: 量价确认因子
+  Money_Flow_20: 资金流向因子
+  Buying_Pressure_20: 买盘压力因子
+  AD_Line_1: 累积/派发因子
+  Chaikin_Osc_3_10: Chaikin振荡器因子
+  Force_Index_13: 力量指数因子
+  EOM_14: 简易波动指标因子
+  NVI: 负成交量指数因子
+  PVI: 正成交量指数因子
+
+================================================================================
+四、波动率因子详细列表 (21个)
+================================================================================
+
+  HV_20: 历史波动率因子
+  HV_60: 历史波动率因子
+  RV_20: 实现波动率因子
+  CCV_20: 收盘-收盘波动率因子
+  Parkinson_20: Parkinson波动率因子
+  Parkinson_60: Parkinson波动率因子
+  GK_20: Garman-Klass波动率因子
+  RS_20: Rogers-Satchell波动率因子
+  YZ_20: Yang-Zhang波动率因子
+  GARCH_252_20: GARCH(1,1)波动率因子
+  EWMA_0.94: EWMA波动率因子
+  EWMA_0.97: EWMA波动率因子
+  Vol_Cone_20_252: 波动率锥因子
+  Vol_Percentile_20_252: 波动率百分位因子
+  Vol_Regime_5_20_1.5: 波动率状态因子
+  Vol_Trend_20: 波动率趋势因子
+  Vol_Skewness_60: 波动率偏度因子
+  Vol_Kurtosis_60: 波动率峰度因子
+  Jump_Vol_20_3.0: 跳跃波动率因子
+  Intraday_Range_20: 日内波幅因子
+  Overnight_Gap_20: 隔夜跳空因子
+
+================================================================================
+五、订单流因子详细列表 (21个)
+================================================================================
+
+  BuySell_Pressure_20: 买卖压力因子
+  BuySell_Pressure_10: 买卖压力因子
+  Trade_Intensity_20: 交易强度因子
+  Tick_Rule_20: Tick规则因子
+  Lee_Ready_20: Lee-Ready因子
+  OB_Imbalance_L1: 订单簿不平衡因子
+  OB_Imbalance_L5: 订单簿不平衡因子
+  OB_Slope_5: 订单簿斜率因子
+  OB_Pressure_5: 订单簿压力因子
+  Spread: 买卖价差因子
+  Depth_Imbalance_5: 深度不平衡因子
+  Funding_Rate: 资金费率因子
+  Funding_Momentum_3: 资金费率动量因子
+  Funding_Extreme_0.001: 资金费率极值因子
+  Open_Interest_20: 持仓量因子
+  Open_Interest_10: 持仓量因子
+  OI_Price_20: 持仓量-价格关系因子
+  OI_Velocity_10: 持仓量速度因子
+  Large_Trade_20_2.0: 大单交易因子
+  Large_Trade_20_3.0: 大单交易因子
+  VW_Trade_20: 成交量加权交易因子
+
+================================================================================
+六、跨市场因子详细列表 (18个)
+================================================================================
+
+  Basis: 基差因子
+  Basis: 基差因子
+  Basis_Momentum_5: 基差动量因子
+  Basis_ZScore_60: 基差Z-Score因子
+  Contango_Backwardation_20: 升贴水因子
+  Calendar_Spread: 跨期价差因子
+  Term_Structure: 期限结构因子
+  Exchange_Spread_binance_okx: 跨交易所价差因子
+  Exchange_Vol_Imbalance_binance_okx: 跨交易所成交量不平衡因子
+  Arbitrage_Opportunity_0.001: 套利机会因子
+  Pair_Spread_BTC_ETH: 币对价差因子
+  Beta_60: Beta因子
+  Correlation_60: 相关性因子
+  Price_Impact_20: 价格冲击因子
+  Liquidity_20: 流动性因子
+  Market_Depth_5: 市场深度因子
+  Cross_Market_Momentum_20: 跨市场动量因子
+  Lead_Lag_20_1: 领先滞后因子
+
+================================================================================
+七、核心功能
+================================================================================
+
+1. 因子计算
+   - 支持单个因子计算
+   - 支持批量因子计算
+   - 支持并行计算加速
+   - 支持分钟级数据
+
+2. 因子检验
+   - IC分析 (信息系数)
+   - 分位数收益分析
+   - 换手率分析
+   - 综合评分排名
+
+3. 因子筛选
+   - 基于IC值筛选
+   - 基于p值筛选
+   - 去除高度相关因子
+   - 多因子组合优化
+
+4. 数据支持
+   - OHLCV基础数据
+   - 订单簿数据
+   - 资金费率数据
+   - 持仓量数据
+   - 跨市场数据
+
+================================================================================
+八、使用示例
+================================================================================
+
+# 基础用法
+from factors import FactorPool, RSIFactor
+
+# 创建因子池
+pool = FactorPool()
+
+# 计算单个因子
+rsi = RSIFactor(window=14)
+values = rsi.compute(data)
+
+# 批量计算所有因子
+factor_values = pool.compute(data, verbose=True)
+
+# 因子检验
+forward_return = data['close'].pct_change(5).shift(-5)
+test_results = pool.test(factor_values, forward_return)
+
+# 获取表现最好的因子
+top_factors = pool.rank_factors(test_results).head(10)
+
+================================================================================
+九、文件清单
+================================================================================
+
+- base_factor.py           : 因子基类和工具函数
+- technical_factors.py     : 技术指标因子 (36个)
+- volume_factors.py        : 量价因子 (26个)
+- volatility_factors.py    : 波动率因子 (21个)
+- orderflow_factors.py     : 订单流因子 (21个)
+- cross_market_factors.py  : 跨市场因子 (18个)
+- factor_pool.py           : 因子池管理
+- __init__.py              : 包入口
+- example_usage.py         : 使用示例
+- README.md                : 说明文档
+- factor_list.csv          : 因子列表
+- factor_visualization.png : 因子可视化图表
+- factor_test_results.png  : 因子检验结果图表
+- factor_correlation.png   : 因子相关性热力图
+
+================================================================================
+                              报告结束
+================================================================================

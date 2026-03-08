@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-03-01T00:22:28.314079",
+  "strategy_info": {
+    "name": "Dual MA Crossover",
+    "description": "\u53cc\u5747\u7ebf\u4ea4\u53c9\u7b56\u7565 (10\u65e5/30\u65e5)",
+    "symbols": "BTCUSDT",
+    "timeframe": "1H",
+    "start_date": "2023-01-01 00:00:00",
+    "end_date": "2023-03-25 07:00:00"
+  },
+  "performance": {
+    "initial_capital": 100000.0,
+    "final_value": 110089.94082982447,
+    "total_pnl": 10089.940829824467,
+    "total_return": 0.10089940829824467,
+    "annualized_return": 0.01770698517270053,
+    "annualized_volatility": 0.015504081089150464,
+    "max_drawdown": -0.017908302911151554,
+    "sharpe_ratio": -0.147897499639891,
+    "sortino_ratio": -0.1944649015128835,
+    "calmar_ratio": 0.9887584133767547,
+    "alpha": -0.015303597397075978,
+    "beta": 0.129288615325875
+  },
+  "trades": {
+    "total_trades": 55,
+    "winning_trades": 10,
+    "losing_trades": 17,
+    "win_rate": 0.18181818181818182,
+    "profit_factor": 3.0036796031136443,
+    "avg_profit": 1396.741492797913,
+    "avg_loss": -273.53538039496954,
+    "max_profit": 3414.972327758319,
+    "max_loss": -617.3005013265495,
+    "expectancy": 169.4056992957209,
+    "sqn": 1.4916050628014688
+  },
+  "overfitting": {}
+}

@@ -19,7 +19,7 @@ from factors import FactorPool
 from factors.base_factor import FactorCategory
 
 # Experiment: use only top N factors by |IC| (None = all)
-TOP_N_FACTORS = 20
+TOP_N_FACTORS = 18
 N_QUANTILES = 3  # 3 = stronger long/short (top vs bottom tercile)
 
 

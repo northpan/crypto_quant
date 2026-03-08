@@ -19,8 +19,10 @@ from factors import FactorPool
 from factors.base_factor import FactorCategory
 
 # Experiment: use only top N factors by |IC| (None = all)
-TOP_N_FACTORS = 17
+TOP_N_FACTORS = 18
 N_QUANTILES = 3  # 3 = stronger long/short (top vs bottom tercile)
+# Composite: "linear" (equal-weight) | "tree" (GBDT) | "mlp" (sklearn MLPRegressor)
+COMPOSITE_MODE = "tree"  # exp 21: tree with stronger regularization
 
 
 def load_ohlcv(symbol: str, timeframe: str, days: int):
@@ -101,6 +103,69 @@ def build_composite_with_insample_stats(factor_df, ic_series, in_sample_mean, in
     return out / n
 
 
+def build_X_matrix(factor_df, ic_5, ic_60, in_sample_mean=None, in_sample_std=None):
+    """Build feature matrix (z-scored, IC-directed) for model. Returns DataFrame index-aligned with factor_df."""
+    cols_5 = [c for c in factor_df.columns if c in ic_5.index]
+    cols_60 = [c for c in factor_df.columns if c in ic_60.index]
+    cols = list(dict.fromkeys(cols_5 + cols_60))
+    if not cols:
+        return pd.DataFrame()
+    out = {}
+    for col in cols:
+        ic5 = ic_5.get(col, 0.0)
+        ic60 = ic_60.get(col, 0.0)
+        if pd.isna(ic5):
+            ic5 = 0.0
+        if pd.isna(ic60):
+            ic60 = 0.0
+        f = factor_df[col].astype(float)
+        if in_sample_mean is not None and in_sample_std is not None:
+            mu, std = in_sample_mean.get(col), in_sample_std.get(col)
+            if mu is None or std is None or pd.isna(std) or std < 1e-10:
+                continue
+            z = (f - mu) / std
+        else:
+            mu, std = f.mean(), f.std()
+            if std is None or pd.isna(std) or std < 1e-10:
+                continue
+            z = (f - mu) / std
+        if ic5 < 0:
+            z = -z
+        out[col] = z
+    if not out:
+        return pd.DataFrame()
+    return pd.DataFrame(out, index=factor_df.index)
+
+
+def _train_predict_composite(mode, X_in, y_in, X_oos, index_in, index_oos):
+    """Train on (X_in, y_in), return (series_in, series_oos) of predictions."""
+    mask = y_in.notna() & X_in.notna().all(axis=1)
+    if mask.sum() < 50:
+        return pd.Series(dtype=float), pd.Series(dtype=float)
+    X_tr = X_in.loc[mask].fillna(0)
+    y_tr = y_in.loc[mask]
+    if mode == "tree":
+        try:
+            from sklearn.ensemble import GradientBoostingRegressor
+            # stronger regularization to reduce overfit (exp 21)
+            m = GradientBoostingRegressor(n_estimators=20, max_depth=2, min_samples_leaf=50, random_state=42)
+            m.fit(X_tr, y_tr)
+        except Exception:
+            return pd.Series(dtype=float), pd.Series(dtype=float)
+    elif mode == "mlp":
+        try:
+            from sklearn.neural_network import MLPRegressor
+            m = MLPRegressor(hidden_layer_sizes=(32,), max_iter=200, random_state=42, early_stopping=True)
+            m.fit(X_tr, y_tr)
+        except Exception:
+            return pd.Series(dtype=float), pd.Series(dtype=float)
+    else:
+        return pd.Series(dtype=float), pd.Series(dtype=float)
+    pred_in = pd.Series(m.predict(X_in.fillna(0)), index=index_in)
+    pred_oos = pd.Series(m.predict(X_oos.fillna(0)), index=index_oos)
+    return pred_in, pred_oos
+
+
 def main():
     # Fixed: 3 months total, 2 months in-sample, 1 month out-of-sample
     total_days = 90
@@ -160,45 +225,64 @@ def main():
         top_factors = abs_ic.nlargest(TOP_N_FACTORS).index.tolist()
         valid = [c for c in valid if c in top_factors]
 
-    def _composite_ret(factor_df, fwd, ic_series, period):
-        comp = None
-        for col in factor_df.columns:
-            ic = ic_series.get(col, 0.0)
-            if pd.isna(ic):
-                ic = 0.0
-            f = factor_df[col].astype(float)
-            if ic < 0:
-                f = -f
-            mu, std = f.mean(), f.std()
-            if std is None or pd.isna(std) or std < 1e-10:
-                continue
-            z = (f - mu) / std
-            comp = z if comp is None else comp.add(z, fill_value=0)
-        if comp is None:
-            return float("nan")
-        comp = comp / len([c for c in factor_df.columns if c in ic_series.index])
-        return compute_single_factor_backtest_ret(comp, fwd, 1.0, period, N_QUANTILES)
-
-    in_ret_5 = _composite_ret(factors_in[valid], forward_5_in, ic_5, 5)
-    in_ret_60 = _composite_ret(factors_in[valid], forward_60_in, ic_60, 60)
-
-    # OOS: compute factors, z-score with in-sample stats, composite, returns
     factors_oos = pool.compute(oos_df, factor_names=valid, verbose=False)
     factors_oos = factors_oos.dropna(axis=1, how="all")
     common_cols = [c for c in valid if c in factors_oos.columns]
-    if len(common_cols) < 5:
-        oos_ret_5 = oos_ret_60 = float("nan")
+    forward_5_oos = oos_df["close"].astype(float).pct_change(5).shift(-5)
+    forward_60_oos = oos_df["close"].astype(float).pct_change(60).shift(-60)
+
+    if COMPOSITE_MODE in ("tree", "mlp") and len(common_cols) >= 5:
+        X_in = build_X_matrix(factors_in[valid], ic_5, ic_60, None, None)
+        X_oos = build_X_matrix(factors_oos[common_cols], ic_5, ic_60, in_sample_mean, in_sample_std)
+        if not X_in.empty and not X_oos.empty:
+            pred_5_in, pred_5_oos = _train_predict_composite(
+                COMPOSITE_MODE, X_in, forward_5_in, X_oos, X_in.index, X_oos.index
+            )
+            pred_60_in, pred_60_oos = _train_predict_composite(
+                COMPOSITE_MODE, X_in, forward_60_in, X_oos, X_in.index, X_oos.index
+            )
+            if not pred_5_in.empty and not pred_5_oos.empty:
+                in_ret_5 = compute_single_factor_backtest_ret(pred_5_in, forward_5_in, 1.0, 5, N_QUANTILES)
+                in_ret_60 = compute_single_factor_backtest_ret(pred_60_in, forward_60_in, 1.0, 60, N_QUANTILES)
+                oos_ret_5 = compute_single_factor_backtest_ret(pred_5_oos, forward_5_oos, 1.0, 5, N_QUANTILES)
+                oos_ret_60 = compute_single_factor_backtest_ret(pred_60_oos, forward_60_oos, 1.0, 60, N_QUANTILES)
+            else:
+                in_ret_5 = in_ret_60 = oos_ret_5 = oos_ret_60 = float("nan")
+        else:
+            in_ret_5 = in_ret_60 = oos_ret_5 = oos_ret_60 = float("nan")
     else:
-        comp_5 = build_composite_with_insample_stats(
-            factors_oos[common_cols], ic_5, in_sample_mean, in_sample_std
-        )
-        comp_60 = build_composite_with_insample_stats(
-            factors_oos[common_cols], ic_60, in_sample_mean, in_sample_std
-        )
-        forward_5_oos = oos_df["close"].astype(float).pct_change(5).shift(-5)
-        forward_60_oos = oos_df["close"].astype(float).pct_change(60).shift(-60)
-        oos_ret_5 = compute_single_factor_backtest_ret(comp_5, forward_5_oos, 1.0, 5, N_QUANTILES)
-        oos_ret_60 = compute_single_factor_backtest_ret(comp_60, forward_60_oos, 1.0, 60, N_QUANTILES)
+        def _composite_ret(factor_df, fwd, ic_series, period):
+            comp = None
+            for col in factor_df.columns:
+                ic = ic_series.get(col, 0.0)
+                if pd.isna(ic):
+                    ic = 0.0
+                f = factor_df[col].astype(float)
+                if ic < 0:
+                    f = -f
+                mu, std = f.mean(), f.std()
+                if std is None or pd.isna(std) or std < 1e-10:
+                    continue
+                z = (f - mu) / std
+                comp = z if comp is None else comp.add(z, fill_value=0)
+            if comp is None:
+                return float("nan")
+            comp = comp / len([c for c in factor_df.columns if c in ic_series.index])
+            return compute_single_factor_backtest_ret(comp, fwd, 1.0, period, N_QUANTILES)
+
+        in_ret_5 = _composite_ret(factors_in[valid], forward_5_in, ic_5, 5)
+        in_ret_60 = _composite_ret(factors_in[valid], forward_60_in, ic_60, 60)
+        if len(common_cols) < 5:
+            oos_ret_5 = oos_ret_60 = float("nan")
+        else:
+            comp_5 = build_composite_with_insample_stats(
+                factors_oos[common_cols], ic_5, in_sample_mean, in_sample_std
+            )
+            comp_60 = build_composite_with_insample_stats(
+                factors_oos[common_cols], ic_60, in_sample_mean, in_sample_std
+            )
+            oos_ret_5 = compute_single_factor_backtest_ret(comp_5, forward_5_oos, 1.0, 5, N_QUANTILES)
+            oos_ret_60 = compute_single_factor_backtest_ret(comp_60, forward_60_oos, 1.0, 60, N_QUANTILES)
 
     if pd.isna(oos_ret_5):
         oos_ret_5 = 0.0

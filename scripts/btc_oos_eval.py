@@ -18,6 +18,9 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from factors import FactorPool
 from factors.base_factor import FactorCategory
 
+# Experiment: use only top N factors by |IC| (None = all)
+TOP_N_FACTORS = 20
+
 
 def load_ohlcv(symbol: str, timeframe: str, days: int):
     """Load OHLCV from data/csv, last `days` days."""
@@ -149,6 +152,10 @@ def main():
     test_60 = pool.test(factors_in[valid], forward_60_in, n_quantiles=5, verbose=False)
     ic_5 = test_5.set_index("name")["ic"]
     ic_60 = test_60.set_index("name")["ic"]
+    if TOP_N_FACTORS is not None and len(valid) > TOP_N_FACTORS:
+        abs_ic = (ic_5.abs() + ic_60.abs()).reindex(valid).fillna(0)
+        top_factors = abs_ic.nlargest(TOP_N_FACTORS).index.tolist()
+        valid = [c for c in valid if c in top_factors]
 
     def _composite_ret(factor_df, fwd, ic_series, period):
         comp = None

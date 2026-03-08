@@ -156,7 +156,7 @@ def main():
     ic_5 = test_5.set_index("name")["ic"]
     ic_60 = test_60.set_index("name")["ic"]
     if TOP_N_FACTORS is not None and len(valid) > TOP_N_FACTORS:
-        abs_ic = (ic_5.abs() + ic_60.abs()).reindex(valid).fillna(0)
+        abs_ic = ic_60.abs().reindex(valid).fillna(0)  # select by 60-period IC
         top_factors = abs_ic.nlargest(TOP_N_FACTORS).index.tolist()
         valid = [c for c in valid if c in top_factors]
 

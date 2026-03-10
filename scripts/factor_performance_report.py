@@ -20,6 +20,9 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from factors import FactorPool
 from factors.base_factor import FactorCategory
 
+# 手续费：bps per side，每次调仓且仓位变化时扣除 2*FEE_BPS/1e4。与 btc_oos_eval 一致。
+FEE_BPS = 10
+
 
 def compute_single_factor_backtest_ret(
     factor_series: pd.Series,
@@ -27,33 +30,34 @@ def compute_single_factor_backtest_ret(
     ic: float,
     forward_period: int,
     n_quantiles: int = 5,
+    fee_bps: Optional[int] = None,
 ) -> float:
     """
     单因子多空回测收益：按分位数做多 Q5、做空 Q1（IC>=0），或反向（IC<0 时做多 Q1、做空 Q5）。
-    使用非重叠区间计算累计收益。
+    使用非重叠区间计算累计收益。若 fee_bps 设置，每次仓位变化时扣除 2*(fee_bps/1e4)。
     """
+    if fee_bps is None:
+        fee_bps = FEE_BPS
     common = factor_series.dropna().index.intersection(forward_return.dropna().index)
     if len(common) < n_quantiles * 2:
         return float("nan")
     f = factor_series.loc[common].astype(float)
     r = forward_return.loc[common].astype(float)
-    # IC 为负则反向：用 -f 做分位数，等价于原因子低分组做多、高分组做空
     if ic < 0:
         f = -f
     q = pd.qcut(f, n_quantiles, labels=False, duplicates="drop")
-    # 1 = 最高分位(Q5) 做多, 0 = 最低分位(Q1) 做空
     q_max = q.max()
     q_min = q.min()
     if pd.isna(q_max) or pd.isna(q_min):
         return float("nan")
     long_signal = (q == q_max).astype(float)
     short_signal = (q == q_min).astype(float)
-    position = long_signal - short_signal  # 1, -1, 0
-    # 非重叠区间：每 forward_period 取一个点
+    position = long_signal - short_signal
     indices = common[::forward_period]
     if len(indices) < 2:
         return float("nan")
     rets = []
+    prev_pos = None
     for i in indices:
         if i not in position.index or i not in r.index:
             continue
@@ -61,10 +65,13 @@ def compute_single_factor_backtest_ret(
         fr = r.loc[i]
         if pd.isna(fr) or pd.isna(pos):
             continue
-        rets.append(pos * fr)
+        raw_ret = pos * fr
+        if prev_pos is not None and pos != prev_pos:
+            raw_ret -= 2 * (fee_bps / 1e4)
+        prev_pos = pos
+        rets.append(raw_ret)
     if not rets:
         return float("nan")
-    # 累计收益 (1+r1)(1+r2)... - 1
     cum = 1.0
     for r_t in rets:
         cum *= 1.0 + r_t
@@ -78,11 +85,14 @@ def get_pnl_curve(
     forward_period: int,
     n_quantiles: int = 5,
     timestamps: Optional[pd.Series] = None,
+    fee_bps: Optional[int] = None,
 ):
     """
-    返回非重叠区间的多空累计权益曲线（从 1 开始），用于绘图。
+    返回非重叠区间的多空累计权益曲线（从 1 开始），用于绘图。若 fee_bps 设置，每次仓位变化时扣费。
     若提供 timestamps（与 factor_series 同索引），返回 (dates, equity)；否则 (period_indices, equity)。
     """
+    if fee_bps is None:
+        fee_bps = FEE_BPS
     common = factor_series.dropna().index.intersection(forward_return.dropna().index)
     if len(common) < n_quantiles * 2:
         return np.array([]), np.array([])
@@ -103,6 +113,7 @@ def get_pnl_curve(
         return np.array([]), np.array([])
     rets = []
     index_used = []
+    prev_pos = None
     for i in indices:
         if i not in position.index or i not in r.index:
             continue
@@ -110,7 +121,11 @@ def get_pnl_curve(
         fr = r.loc[i]
         if pd.isna(fr) or pd.isna(pos):
             continue
-        rets.append(pos * fr)
+        raw_ret = pos * fr
+        if prev_pos is not None and pos != prev_pos:
+            raw_ret -= 2 * (fee_bps / 1e4)
+        prev_pos = pos
+        rets.append(raw_ret)
         index_used.append(i)
     if not rets:
         return np.array([]), np.array([])
@@ -262,6 +277,7 @@ def main():
                 ic_val,
                 fp,
                 n_quantiles=5,
+                fee_bps=FEE_BPS,
             )
             backtest_rets.append(ret)
         test_df["backtest_ret"] = backtest_rets
@@ -278,10 +294,10 @@ def main():
     forward_ret_5 = data["close"].astype(float).pct_change(5).shift(-5)
     forward_ret_60 = data["close"].astype(float).pct_change(60).shift(-60)
     composite_backtest_ret_5 = compute_single_factor_backtest_ret(
-        composite_5, forward_ret_5, ic=1.0, forward_period=5, n_quantiles=5
+        composite_5, forward_ret_5, ic=1.0, forward_period=5, n_quantiles=5, fee_bps=FEE_BPS
     )
     composite_backtest_ret_60 = compute_single_factor_backtest_ret(
-        composite_60, forward_ret_60, ic=1.0, forward_period=60, n_quantiles=5
+        composite_60, forward_ret_60, ic=1.0, forward_period=60, n_quantiles=5, fee_bps=FEE_BPS
     )
     print(f"等权复合因子 5期回测ret: {composite_backtest_ret_5*100:.2f}%")
     print(f"等权复合因子 60期回测ret: {composite_backtest_ret_60*100:.2f}%")
@@ -289,10 +305,10 @@ def main():
     # 2.6) 绘制 5 期 / 60 期多空累计 PnL 曲线图（横轴交易日期，英文标注）
     ts_series = data["timestamp"] if "timestamp" in data.columns else None
     x5, y5 = get_pnl_curve(
-        composite_5, forward_ret_5, ic=1.0, forward_period=5, n_quantiles=5, timestamps=ts_series
+        composite_5, forward_ret_5, ic=1.0, forward_period=5, n_quantiles=5, timestamps=ts_series, fee_bps=FEE_BPS
     )
     x60, y60 = get_pnl_curve(
-        composite_60, forward_ret_60, ic=1.0, forward_period=60, n_quantiles=5, timestamps=ts_series
+        composite_60, forward_ret_60, ic=1.0, forward_period=60, n_quantiles=5, timestamps=ts_series, fee_bps=FEE_BPS
     )
     try:
         import matplotlib
@@ -311,7 +327,7 @@ def main():
             ax.axhline(1.0, color="gray", ls="--", alpha=0.7)
             ax.set_xlabel("Trading date")
             ax.set_ylabel("Cumulative equity (1 = initial)")
-            ax.set_title(f"Equal-weight linear composite · {label}")
+            ax.set_title(f"Equal-weight linear composite · {label} · fee={FEE_BPS}bps")
             ax.legend(loc="best")
             ax.grid(True, alpha=0.3)
             if np.issubdtype(x.dtype, np.datetime64) or (hasattr(x, "dtype") and pd.api.types.is_datetime64_any_dtype(x)):
@@ -342,8 +358,9 @@ def main():
         f"- **分位数**: 5 分位（Q1 最低因子值 ~ Q5 最高因子值）",
         "- **方向**: IC<0 的因子在回测中按**反向**处理（做多 Q1、做空 Q5），再计算单因子回测 ret",
         "- **单因子回测 ret**: 非重叠区间多空收益，(1+r1)(1+r2)...-1",
+        f"- **手续费**: 每次调仓且仓位变化时扣除 {FEE_BPS} bps 单边（{2*FEE_BPS} bps 双边），回测 ret 为扣费后",
         "",
-        "### 等权复合因子回测结果",
+        "### 等权复合因子回测结果（扣费后）",
         "",
         "将所有因子线性等权合成（IC<0 的因子取反后截面 z-score 标准化再等权平均），按同一多空规则回测：",
         "",
@@ -458,7 +475,7 @@ def main():
         "1. **IC 与方向**: |IC| 越大且 p 值越小，因子对未来收益的预测能力越强；多空收益列为 Q5−Q1 分组收益差。",
         "2. **换手率**: 换手率过高会增加交易成本，实盘需结合成本评估。",
         "3. **周期**: 5 期与 60 期分别对应短期与中期预测，可按策略持仓周期选用。",
-        f"4. **单因子回测 ret**: IC 为负的因子已按反向（做多 Q1、做空 Q5）计算回测 ret，所有单因子 ret 见第四节及 `reports/factor_backtest_ret{suffix}.csv`。",
+        f"4. **单因子回测 ret**: IC 为负的因子已按反向（做多 Q1、做空 Q5）计算回测 ret，所有单因子 ret 见第四节及 `reports/factor_backtest_ret{suffix}.csv`。**已扣费**（{FEE_BPS} bps 单边/次调仓）。",
         "5. **后续**: 可对 Top 因子做组合、中性化或纳入模型特征。",
         "",
     ])
